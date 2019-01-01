@@ -1,0 +1,28 @@
+---
+title: "Jackknife Sampling"
+author: "Nicholas F. Brazeau"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+This vignette provides basic functionality for the function `block_jackknife`. Of note, this function is largely redundant with the `block_jackknife` function in the `[vcfdo](https://github.com/IDEELResearch/vcfdo)` package.  
+
+
+```{r}
+
+```
+
+
+
+

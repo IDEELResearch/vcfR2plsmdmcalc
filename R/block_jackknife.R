@@ -4,17 +4,14 @@
 
 block_jackknife <- function(values, statistic, block_size = 1, ...){
 
-  if(! inherits(values, c("numeric", "integer", "data.frame", "tibble")) ){
-    stop(paste(class(values), " not supported for this operation. Unexpected behaviors
-               with matrix operations and split. Must coerce to a (single) numeric or integer vector, data.frame, or tibble"))
+  if(! inherits(values, c("numeric", "integer")) ){
+    stop(paste(class(values), " not supported for this operation.
+               Must coerce to a (single) numeric or integer vector"))
   }
 
   ## how long is input? allow to be multidimensional, assume replicates are in rows
-  if(inherits(values, c("numeric", "integer"))){
     n <- length(values)
-  } else {
-    n <- nrow(values)
-  }
+
   ## how many blocks, respecting (approx) the block size?
   M = (n/block_size)
 
@@ -37,28 +34,15 @@ block_jackknife <- function(values, statistic, block_size = 1, ...){
 
   theta <- rep(0, M)
 
-  if(inherits(values, c("numeric", "integer"))){
+
   ## loop on blocks
-    for(j in 1:length(blocks)){
-      idx <- rep(T, length(blocks))
-      idx[j] <- F
-      keep <- unlist(blocks[idx])
-      ## calculate statistic on remaining values
-      theta[j] = statistic(keep)
-    }
-
-  } else {
-
-    for(j in 1:length(blocks)){
-      idx <- rep(T, length(blocks))
-      idx[j] <- F
-      keep <- dplyr::bind_rows(blocks[idx])
-      ## calculate statistic on remaining values
-      theta[j] = statistic(keep)
-    }
+  for(j in 1:length(blocks)){
+    idx <- rep(T, length(blocks))
+    idx[j] <- F
+    keep <- unlist(blocks[idx])
+    ## calculate statistic on remaining values
+    theta[j] = statistic(keep)
   }
-
-
 
   ## calculate standard error
   theta_bar = mean(theta)

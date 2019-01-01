@@ -30,3 +30,4 @@ Suggests:
     parallel,
     rmarkdown,
     covr
+VignetteBuilder: knitr
