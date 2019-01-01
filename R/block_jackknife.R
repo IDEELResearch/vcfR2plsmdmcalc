@@ -10,7 +10,7 @@ block_jackknife <- function(values, statistic, block_size = 1, ...){
   }
 
   ## how long is input? allow to be multidimensional, assume replicates are in rows
-    n <- length(values)
+  n <- length(values)
 
   ## how many blocks, respecting (approx) the block size?
   M = (n/block_size)
@@ -32,7 +32,7 @@ block_jackknife <- function(values, statistic, block_size = 1, ...){
     ))
   }
 
-  theta <- rep(0, M)
+  theta <- rep(NA, M)
 
 
   ## loop on blocks
@@ -41,7 +41,7 @@ block_jackknife <- function(values, statistic, block_size = 1, ...){
     idx[j] <- F
     keep <- unlist(blocks[idx])
     ## calculate statistic on remaining values
-    theta[j] = statistic(keep)
+    theta[j] <- statistic(keep)
   }
 
   ## calculate standard error

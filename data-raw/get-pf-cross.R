@@ -35,11 +35,11 @@
 url <- "ftp://ngs.sanger.ac.uk/production/malaria/pf-crosses/1.0/3d7_hb3.combined.final.vcf.gz"
 destfile <- "data-raw/3d7_hb3.combined.final.vcf.gz"
 httr::GET(url=url, httr::write_disk(path=destfile, overwrite = T))
-pfcrss <- vcfR::read.vcfR(file=destfile)
-pfcrss_bisnps <- vcfR::extract.indels(vcfRobject[vcfR::is.biallelic(vcfRobject)], return.indels = F) # subset to SNPs
-pfcrss_bisnps_chr1 <- vcfR2manip::vcfR2SubsetChrom(vcfRobject = vcfRobject, chromvect = "Pf3D7_01_v3")
-pfcrss_bisnps_chr1_sub <- vcfRobject[, c("FORMAT", "3D7/PG0051-C/ERR019061", "HB3/PG0052-C/ERR019054", "C04/PG0061-C/ERR019059", "C02/PG0053-C/ERR019067")]
+pfcross_subset <- vcfR::read.vcfR(file=destfile)
+pfcross_subset <- vcfR::extract.indels(pfcross_subset[vcfR::is.biallelic(pfcross_subset)], return.indels = F) # subset to SNPs
+pfcross_subset <- vcfR2manip::vcfR2SubsetChrom(vcfRobject = vcfRobject, chromvect = "Pf3D7_01_v3")
+pfcross_subset <- pfcross_subset[, c("FORMAT", "3D7/PG0051-C/ERR019061", "HB3/PG0052-C/ERR019054", "C04/PG0061-C/ERR019059", "C02/PG0053-C/ERR019067")]
 
-usethis::use_data(pfcrss_bisnps_chr1_sub, overwrite = TRUE)
+usethis::use_data(pfcross_subset, overwrite = TRUE)
 
 
