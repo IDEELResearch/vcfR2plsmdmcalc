@@ -93,7 +93,7 @@ Issues are the mccoilr_categorical function writes out. If you want to keep all 
 ret <- block_jackknife4sample_posterior_mccoilr_categorical( 
         data = gtmat, 
         path = path, 
-        block_size = 25,
+        block_size = 1,
         maxCOI=25, threshold_ind=20, threshold_site=20,
         totalrun=1000, burnin=100, M0=15, 
         e1=0.05, e2=0.05,
