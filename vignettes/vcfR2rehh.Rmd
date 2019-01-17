@@ -1,0 +1,81 @@
+---
+title: "Convert vcfR to REHH Object"
+author: "Nicholas F. Brazeau"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+
+devtools::install_github("IDEELResearch/vcfR2plsmdmcalc")
+library(vcfR2plsmdmcalc)
+data("pfcross_subset", package = "vcfR2plsmdmcalc")
+pfcross_subset
+
+data("pf3k_subset", package = "vcfR2plsmdmcalc")
+
+library(vcfR)
+library(rehh)
+
+```
+
+## Setup
+There are two main files need to setup `rehh`. 
+
+### haplotype file 
+Note, EHH expects you to have biallelic sites that are split by chromosome. Although you can have a map file with multiple chromosomes, it would be better to split it out. Either way, the package structure for `rehh` makes you write out to disk a lot... Could manipulate their `haplohh` class to avoid this...but for now we will write out as below. You will need the  `vcfR2plsmdmcalc::vcfR2thap` wrapper function to make a "haplotype" file. 
+
+### map file 
+In the map file, `rehh` requires that we have ancestral/derived alleles (i.e. that we have polarized our alleles). This is needed for within population statistics where we are trying to characterize the strength of LD (i.e. or really IBS block length) around a "focal marker". As such, polarization of the ancestral vs. derived allele matters. However, if you want to compare between populations, _XP-EHH_ the ancestral and derived allele doesn't matter (it can be assigned at random). Or you can ignore the ancestral/derived state all together (i.e. _EHHS_). 
+
+
+```{r}
+
+
+thap <- as.data.frame(vcfR2thap(playvcf)) 
+playmap <- data.frame(name = paste0("name", seq(1:nrow(playvcf@gt))),
+                      chrom = 1,
+                      pos = as.numeric(playvcf@fix[,2]),
+                      anc = playvcf@fix[,4],
+                      der = playvcf@fix[,5])
+
+write.table(x = thap, file = "~/Desktop/test/vcfRrest/test.thap",
+            sep = " ", quote = F, row.names =T, col.names = F)
+
+write.table(x = playmap, file = "~/Desktop/test/vcfRrest/playmap.inp",
+            sep = " ", quote = F, row.names =F, col.names = F)
+
+hapobj <- data2haplohh(hap_file="~/Desktop/test/vcfRrest/test.thap",
+                  map_file="~/Desktop/test/vcfRrest/playmap.inp",
+                  haplotype.in.columns=TRUE,
+                  recode.allele=T,
+                  chr.name=1, 
+                  min_perc_geno.hap=0,
+                  min_perc_geno.snp=0
+                  )
+
+
+calc_ehh(haplohh = hapobj,
+         mrk = 1,
+         limhaplo = 2,
+         limehh = 0.0001,
+         plotehh = F
+         )
+
+
+
+```
+
+
+
+
