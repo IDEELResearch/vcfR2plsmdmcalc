@@ -22,8 +22,6 @@ library(vcfR2plsmdmcalc)
 data("pfcross_subset", package = "vcfR2plsmdmcalc")
 pfcross_subset
 
-data("pf3k_subset", package = "vcfR2plsmdmcalc")
-
 library(vcfR)
 library(rehh)
 
@@ -38,16 +36,17 @@ Note, EHH expects you to have biallelic sites that are split by chromosome. Alth
 ### map file 
 In the map file, `rehh` requires that we have ancestral/derived alleles (i.e. that we have polarized our alleles). This is needed for within population statistics where we are trying to characterize the strength of LD (i.e. or really IBS block length) around a "focal marker". As such, polarization of the ancestral vs. derived allele matters. However, if you want to compare between populations, _XP-EHH_ the ancestral and derived allele doesn't matter (it can be assigned at random). Or you can ignore the ancestral/derived state all together (i.e. _EHHS_). 
 
-
+## Importing and Wrangling
+Note, I am making a **big** assumption here that the referent allele can be polarized as the ancestral allele. This is almost certainly not the case for every position...but as a temporary fix. I also know that all of this data just came from Chromosome 1, so can make another heuristic by saying `chrom=1`. Note, `rehh` will make you write out to your disk-space, so you will need to change the paths here. 
 ```{r}
 
 
-thap <- as.data.frame(vcfR2thap(playvcf)) 
-playmap <- data.frame(name = paste0("name", seq(1:nrow(playvcf@gt))),
+thap <- as.data.frame(vcfR2thap(pfcross_subset)) 
+playmap <- data.frame(name = paste0("name", seq(1:nrow(pfcross_subset@gt))),
                       chrom = 1,
-                      pos = as.numeric(playvcf@fix[,2]),
-                      anc = playvcf@fix[,4],
-                      der = playvcf@fix[,5])
+                      pos = as.numeric(pfcross_subset@fix[,2]),
+                      anc = pfcross_subset@fix[,4],
+                      der = pfcross_subset@fix[,5])
 
 write.table(x = thap, file = "~/Desktop/test/vcfRrest/test.thap",
             sep = " ", quote = F, row.names =T, col.names = F)
@@ -65,17 +64,37 @@ hapobj <- data2haplohh(hap_file="~/Desktop/test/vcfRrest/test.thap",
                   )
 
 
+```
+
+## Taking `rehh` for a Spin
+
+**Not a good example since this is cross data. Change to subset of Pf3k...**
+```{r}
+
+
 calc_ehh(haplohh = hapobj,
-         mrk = 1,
+         mrk = 50,
          limhaplo = 2,
-         limehh = 0.0001,
-         plotehh = F
+         limehh = 0.05,
+         plotehh = T
          )
+
 
 
 
 ```
 
+```{r}
+
+calc_ehhs(haplohh = hapobj,
+         mrk = 50,
+         limhaplo = 2,
+         limehh = 0.05,
+         plotehh = T
+         )
+
+
+```
 
 
 
